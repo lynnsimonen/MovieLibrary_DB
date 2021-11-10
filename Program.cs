@@ -27,29 +27,29 @@ namespace MovieLibrary_DB1
                 //ADD MOVIE
                 if (libraryOption.ToUpper() == "A")
                 {
-                    MovieManager movieManager = new MovieManager();
+                    DataModels.MovieManager movieManager = new DataModels.MovieManager();
                     movieManager.Add();
                 }
 
                 //SEARCH FOR MOVIE
                 else if (libraryOption.ToUpper() == "B")
                 {
-                    MovieManager movieManager = new MovieManager();
-                    blogManager.Search();
+                    DataModels.MovieManager movieManager = new DataModels.MovieManager();
+                    movieManager.Search();
                 }
 
                 //UPDATE MOVIE
                 else if (libraryOption.ToUpper() == "C")
                 {
-                     MovieManager movieManager = new MovieManager();
-                    postManager.Update();
+                    DataModels.MovieManager movieManager = new DataModels.MovieManager();
+                    movieManager.Update();
                 }
 
                 //DELETE MOVIE
                 else if (libraryOption.ToUpper() == "D")
                 {
-                    MovieManager movieManager = new MovieManager();
-                    postManager.Delete();
+                    DataModels.MovieManager movieManager = new DataModels.MovieManager();
+                    movieManager.Delete();
                 }
 
             } while (!(libraryOption.ToUpper() == "QUIT"));    
