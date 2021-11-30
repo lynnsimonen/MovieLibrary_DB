@@ -14,7 +14,7 @@ namespace MovieLibrary_DB1.Context
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=bitsql.wctc.edu;Database=lsimonen_12090_Movie;User ID=lsimonen;Password=000259304;");
+            optionsBuilder.UseSqlServer(@"");
         }
     }
 }
