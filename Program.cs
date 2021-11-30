@@ -15,7 +15,7 @@ namespace MovieLibrary_DB1
                 {
                     Console.WriteLine("\nMOVIE LIBRARY.  HOW CAN WE HELP YOU?"
                     +"\nA Add a movie to the library"
-                    +"\nB Search for movie in library" 
+                    +"\nB Search for a movie or view all items in library" 
                     +"\nC Update a movie in library"
                     +"\nD Delete a movie from the library" 
                     +"\nQUIT program");
@@ -33,15 +33,24 @@ namespace MovieLibrary_DB1
 
                 //SEARCH FOR MOVIE
                 else if (libraryOption.ToUpper() == "B")
-                {
-                    DataModels.MovieManager movieManager = new DataModels.MovieManager();
-                    movieManager.Search();
-                }
+                    Console.WriteLine("\nWould you like to search for ONE movie or view ALL movies in library?");
+                string searchOption = Console.ReadLine().ToUpper();
+                if (searchOption == "ONE")
+                    {
+                        DataModels.MovieManager movieManager = new DataModels.MovieManager();
+                        movieManager.Search();
+                    }
+                if (searchOption == "ALL")
+                    {
+                        DataModels.MovieManager movieManager = new DataModels.MovieManager();
+                        movieManager.Display();
+                    }
 
                 //UPDATE MOVIE
                 else if (libraryOption.ToUpper() == "C")
                 {
                     DataModels.MovieManager movieManager = new DataModels.MovieManager();
+                    movieManager.SearchKeyword();
                     movieManager.Update();
                 }
 
@@ -52,7 +61,7 @@ namespace MovieLibrary_DB1
                     movieManager.Delete();
                 }
 
-            } while (!(libraryOption.ToUpper() == "QUIT"));    
+            } while (libraryOption.ToUpper() != "QUIT");    
         }
     }
 }
