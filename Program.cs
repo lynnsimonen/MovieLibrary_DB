@@ -43,7 +43,7 @@ namespace MovieLibrary_DB1
                     if (searchOption == "ONE")
                         {
                             DataModels.MovieManager movieManager = new DataModels.MovieManager();
-                            movieManager.Search();
+                            movieManager.SearchKeyword();
                         }
                     if (searchOption == "ALL")
                         {

@@ -13,21 +13,50 @@ namespace MovieLibrary_DB1.DataModels
     {
         public void Add()
         {
-            System.Console.WriteLine("Title of Movie to Add: ");
-            var title = Console.ReadLine();
-            System.Console.WriteLine("Release Year of Movie: ");
-            var releaseYear = Console.ReadLine();
-            string titleAndYear = title + " (" + releaseYear + ")";
-
-            using (var db = new Context.MovieContext())
+            bool bError;
+            do
             {
-                var movie = new Movie() {Title = titleAndYear, ReleaseDate = DateTime.Now};
-                db.Movies.Add(movie);
-                db.SaveChanges();
+                
+                try 
+                {
+                    var title = "";
+                    var releaseYear = DateTime.Now;
+                    int dateMin;
+                    int dateMax;
+                    do {
+                        bError = false;
+                        System.Console.WriteLine("Title of Movie to Add: ");
+                        title = Console.ReadLine();
+                        System.Console.WriteLine("Release Year of Movie (YYYY): ");
+                        releaseYear = DateTime.Parse("01/01/" + (Console.ReadLine())); //.ToString("yyyy");
+                        dateMin = DateTime.Compare(releaseYear, new DateTime(1900, 1, 1));
+                        dateMax = DateTime.Compare(releaseYear, new DateTime(2023, 1, 1));
+                        if ((dateMax > 0) || (dateMin < 0))
+                            {System.Console.WriteLine("\nHint: try a year between 1900 and 2023.\n");}
+                    }
+                    while ((dateMax > 0) || (dateMin < 0));
+                    
+                    string titleAndYear = title + " (" + releaseYear.ToString("yyyy") + ")";
 
-                var newMovie = db.Movies.FirstOrDefault(x => x.Title == titleAndYear);
-                System.Console.WriteLine($"\nThe New Movie Added: {newMovie?.Id} {newMovie?.Title}");
-            }
+                    using (var db = new Context.MovieContext())
+                    {
+                        var movie = new Movie() {Title = titleAndYear, ReleaseDate = DateTime.Now};
+                        db.Movies.Add(movie);
+                        db.SaveChanges();
+
+                        var newMovie = db.Movies.FirstOrDefault(x => x.Title == titleAndYear);
+                        System.Console.WriteLine($"\nThe New Movie Added: {newMovie?.Id} {newMovie?.Title}");
+                    }
+                }
+                catch (Exception e)
+                {
+                    System.Console.WriteLine("\n** Error Message: " + e.Message + "**");
+                    bError = true;
+                    System.Console.WriteLine("\nWould you like to try again? Y/N");
+                    var anotherUpdate = Console.ReadLine();
+                    bError = (anotherUpdate.ToUpper() == "Y") ? true: false;
+                }
+            } while (bError);     
         } 
         //------------------------------------------------------------------------------------------------------------  
         // SPECIFIC TITLE SEARCH ONLY
@@ -177,7 +206,7 @@ namespace MovieLibrary_DB1.DataModels
                     var deleteMovieId = db.Movies.FirstOrDefault(x => x.Id == IdOrPrint);
                     if (deleteMovieId != null)
                     {
-                        System.Console.WriteLine($"\nMovie Removed: {deleteMovieId.Id}");
+                        System.Console.WriteLine($"\nMovie Removed: {deleteMovieId.Id} - {deleteMovieId.Title}");
                         db.Movies.Remove(deleteMovieId);
                         db.SaveChanges();
                     }                
