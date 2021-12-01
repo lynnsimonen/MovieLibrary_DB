@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using NLog;
+using NLog.Web;
 
 namespace MovieLibrary_DB1
 {
@@ -7,6 +9,9 @@ namespace MovieLibrary_DB1
     {
         static void Main(string[] args)
         {
+            Logger log = LogManager.GetCurrentClassLogger();            
+            log.Trace("Logging starts now");
+
             string libraryOption = "";
             do
             {
@@ -34,17 +39,17 @@ namespace MovieLibrary_DB1
                 //SEARCH FOR MOVIE
                 else if (libraryOption.ToUpper() == "B")
                     Console.WriteLine("\nWould you like to search for ONE movie or view ALL movies in library?");
-                string searchOption = Console.ReadLine().ToUpper();
-                if (searchOption == "ONE")
-                    {
-                        DataModels.MovieManager movieManager = new DataModels.MovieManager();
-                        movieManager.Search();
-                    }
-                if (searchOption == "ALL")
-                    {
-                        DataModels.MovieManager movieManager = new DataModels.MovieManager();
-                        movieManager.Display();
-                    }
+                    string searchOption = Console.ReadLine().ToUpper();
+                    if (searchOption == "ONE")
+                        {
+                            DataModels.MovieManager movieManager = new DataModels.MovieManager();
+                            movieManager.Search();
+                        }
+                    if (searchOption == "ALL")
+                        {
+                            DataModels.MovieManager movieManager = new DataModels.MovieManager();
+                            movieManager.Display();
+                        }
 
                 //UPDATE MOVIE
                 else if (libraryOption.ToUpper() == "C")

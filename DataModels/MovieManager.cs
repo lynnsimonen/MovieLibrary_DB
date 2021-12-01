@@ -59,25 +59,23 @@ namespace MovieLibrary_DB1.DataModels
                using (var db = new Context.MovieContext())
                {
                     var moviesContains = db.Movies.Where(m => m.Title.ToUpper().Contains(searchWord));
-                    moviesContains.ToList().ForEach(p => Console.WriteLine(p.ToString()));
+                    //moviesContains.ToList().ForEach(p => Console.WriteLine(p.ToString()));
                     
-                    System.Console.WriteLine($"\nMovie Library matches: ({moviesContains.Count()})");
+                    System.Console.WriteLine($"\nMovie Database matches: ({moviesContains.Count()})");
                     string listMore = "";
                     int skip = 0;
                     int take = 10;
-                    do
-                    {
+                    do {
                         moviesContains.Skip(skip).Take(take).ToList()
-                        .ForEach(s => Console.WriteLine($"     {ToString}"));
+                        .ForEach(b => Console.WriteLine("{0,8}  {1,-65}  {2,-45}", b.Id, b.Title, b.ReleaseDate));
                         skip = skip+10;
-
                         string oops5 = "";
                         do {
-                        Console.WriteLine("\nWould you like to have more movies listed? Y/N");
-                        listMore = Console.ReadLine().ToUpper();
-                        oops5 = (listMore == "Y" || listMore == "N") ? "Y" : "N";
+                            Console.WriteLine("\nWould you like to have more movies listed? Y/N");
+                            listMore = Console.ReadLine().ToUpper();
+                            oops5 = (listMore == "Y" || listMore == "N") ? "Y" : "N";
                         } while (oops5 != "Y");  
-                    } while (!(listMore == "N"));
+                    } while (listMore !="N");
                }                
            }
         }
@@ -88,13 +86,22 @@ namespace MovieLibrary_DB1.DataModels
                         using (var db = new Context.MovieContext())
                         {
                             System.Console.WriteLine("\nMovies Database List:\n");
-                            foreach (var b in db.Movies) 
-                            {
-                                if (b.Title == null || b?.Id == null || b.ReleaseDate == null)
-                                    System.Console.WriteLine($"Movie ID#{b.Id} is empty.");
-                                else
-                                    System.Console.WriteLine($"{b.Id} {b.Title} {b.ReleaseDate}");
-                            }
+                            string listMore = "";
+                            int skip = 0;
+                            int take = 10;
+                            do
+                            { 
+                                db.Movies.Skip(skip).Take(take).ToList()
+                                .ForEach(b => Console.WriteLine("{0,8}  {1,-65}  {2,-45}", b.Id, b.Title, b.ReleaseDate));
+                                skip = skip+10;
+                                string oops5 = "";
+                                do {
+                                    Console.WriteLine("\nWould you like to have more movies listed? Y/N");
+                                    listMore = Console.ReadLine().ToUpper();
+                                    oops5 = (listMore == "Y" || listMore == "N") ? "Y" : "N";
+                                } while (oops5 != "Y");  
+                            } while (listMore !="N");
+                           
                         }
                     }
 
