@@ -12,6 +12,7 @@ namespace MovieLibrary_DB1.DataModels
         [Required]
         [MaxLength(85)]
         public string Title { get; set; }
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:yyyy}")]
         public DateTime ReleaseDate { get; set; }
 
         

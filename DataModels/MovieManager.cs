@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Text;
 using System.Data;
+using NLog;
+using NLog.Web;
 
 namespace MovieLibrary_DB1.DataModels
 {
@@ -16,9 +18,10 @@ namespace MovieLibrary_DB1.DataModels
             System.Console.WriteLine("Release Year of Movie: ");
             var releaseYear = Console.ReadLine();
             string titleAndYear = title + " (" + releaseYear + ")";
+
             using (var db = new Context.MovieContext())
             {
-                var movie = new Movie() {Title = titleAndYear};
+                var movie = new Movie() {Title = titleAndYear, ReleaseDate = DateTime.Now};
                 db.Movies.Add(movie);
                 db.SaveChanges();
 
@@ -27,6 +30,7 @@ namespace MovieLibrary_DB1.DataModels
             }
         } 
         //------------------------------------------------------------------------------------------------------------  
+        // SPECIFIC TITLE SEARCH ONLY
         public void Search()
         {
             System.Console.WriteLine("Search for Movie Name: ");
@@ -49,32 +53,40 @@ namespace MovieLibrary_DB1.DataModels
         }
 
         //-----------------------------------------------------------------------------------------------------------
+        // SPECIFIC TITLE OR KEYWORD SEARCH
         public void SearchKeyword()
         {
             var searchWord = "";
             System.Console.Write("\nWhat movie Title or keyphrase would you like to search?: ");
             searchWord = Console.ReadLine()?.ToUpper();
             if (searchWord != null)
-           {
+            {
                using (var db = new Context.MovieContext())
                {
                     var moviesContains = db.Movies.Where(m => m.Title.ToUpper().Contains(searchWord));
-                    //moviesContains.ToList().ForEach(p => Console.WriteLine(p.ToString()));
                     
                     System.Console.WriteLine($"\nMovie Database matches: ({moviesContains.Count()})");
-                    string listMore = "";
+                    string listMore = "N";
                     int skip = 0;
                     int take = 10;
                     do {
-                        moviesContains.Skip(skip).Take(take).ToList()
-                        .ForEach(b => Console.WriteLine("{0,8}  {1,-65}  {2,-45}", b.Id, b.Title, b.ReleaseDate));
+                        var listNow = moviesContains.Skip(skip).Take(take).ToList();
+                        listNow.ForEach(b => Console.WriteLine("{0,8}  {1,-65}  {2,-45}", b.Id, b.Title, b.ReleaseDate));
                         skip = skip+10;
                         string oops5 = "";
-                        do {
-                            Console.WriteLine("\nWould you like to have more movies listed? Y/N");
-                            listMore = Console.ReadLine().ToUpper();
-                            oops5 = (listMore == "Y" || listMore == "N") ? "Y" : "N";
-                        } while (oops5 != "Y");  
+                        if (listNow.Count() == 10)
+                        {
+                            do {
+                                Console.WriteLine("\nWould you like to have more movies listed? Y/N");
+                                listMore = Console.ReadLine().ToUpper();
+                                oops5 = (listMore == "Y" || listMore == "N") ? "Y" : "N";
+                            } while (oops5 != "Y");
+                        }   
+                        else 
+                        {
+                            listMore = "N";
+                        }                     
+                       
                     } while (listMore !="N");
                }                
            }
@@ -110,26 +122,46 @@ namespace MovieLibrary_DB1.DataModels
 
         public void Update()
         {
-            System.Console.WriteLine("Enter ID# of movie to Update: ");
-            var iDSearch = long.Parse(Console.ReadLine());
+            string titleAndYear2 = "";
+            long iDSearch = 100;            
+            bool bError;
+            do
+            {
+                
+                try {
+                    bError = false;
+                    System.Console.WriteLine("\nEnter ID# of movie to Update: ");
+                    iDSearch = long.Parse(Console.ReadLine());
+                    System.Console.WriteLine("Enter Updated Movie Title: ");
+                    var title2 = Console.ReadLine();
+                    System.Console.WriteLine("Enter updated Release Year: ");
+                    var releaseYear2 = Console.ReadLine();
+                    titleAndYear2 = title2 + " (" + releaseYear2 + ")";
 
-                System.Console.WriteLine("Enter Updated Movie Title: ");
-                var title2 = Console.ReadLine();
-                System.Console.WriteLine("Enter updated Release Year: ");
-                var releaseYear2 = Console.ReadLine();
-                string titleAndYear2 = title2 + " (" + releaseYear2 + ")";
-
-                using (var db = new Context.MovieContext())
+                     using (var db = new Context.MovieContext())
+                    {
+                        var updateMovie = db.Movies.Where(x => x.Id == iDSearch).FirstOrDefault();
+                        System.Console.WriteLine($"\nORIGINAL MOVIE: ({updateMovie.Id}) {updateMovie.Title}");
+                        updateMovie.Title = titleAndYear2;
+                        db.Movies.Update(updateMovie);
+                        System.Console.WriteLine($"\nUPDATED MOVIE: ({updateMovie.Id}) {updateMovie.Title}");
+                        db.SaveChanges();  
+                    }    
+                }
+                catch (Exception e)
                 {
-                    var updateMovie = db.Movies.Where(x => x.Id == iDSearch).FirstOrDefault();
-                    System.Console.WriteLine($"\nORIGINAL MOVIE: ({updateMovie.Id}) {updateMovie.Title}");
+                    System.Console.WriteLine("\n** Error Message: " + e.Message + "**");
+                    bError = true;
+                    System.Console.WriteLine("\nWould you like to try another update? Y/N");
+                    var anotherUpdate = Console.ReadLine();
+                    if (anotherUpdate.ToUpper() == "N")
+                    {
+                        bError = false;
+                    }
+                }
+            } while (bError); 
 
-                    updateMovie.Title = titleAndYear2;
-
-                    db.Movies.Update(updateMovie);
-                    System.Console.WriteLine($"\nUPDATED MOVIE: ({updateMovie.Id}) {updateMovie.Title}");
-                    db.SaveChanges();  
-                }            
+                   
         }
         //-----------------------------------------------------------------------------------------------------------
         public void Delete()
