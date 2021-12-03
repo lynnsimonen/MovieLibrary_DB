@@ -52,9 +52,6 @@ namespace MovieLibrary_DB1.DataModels
                 {
                     System.Console.WriteLine("\n** Error Message: " + e.Message + "**");
                     bError = true;
-                    System.Console.WriteLine("\nWould you like to try again? Y/N");
-                    var anotherUpdate = Console.ReadLine();
-                    bError = (anotherUpdate.ToUpper() == "Y") ? true: false;
                 }
             } while (bError);     
         } 
@@ -120,43 +117,16 @@ namespace MovieLibrary_DB1.DataModels
                }                
            }
         }
-        //-----------------------------------------------------------------------------------------------------------
 
-         public void Display()
-                    {
-                        using (var db = new Context.MovieContext())
-                        {
-                            System.Console.WriteLine("\nMovies Database List:\n");
-                            string listMore = "";
-                            int skip = 0;
-                            int take = 10;
-                            do
-                            { 
-                                db.Movies.Skip(skip).Take(take).ToList()
-                                .ForEach(b => Console.WriteLine("{0,8}  {1,-65}  {2,-45}", b.Id, b.Title, b.ReleaseDate));
-                                skip = skip+10;
-                                string oops5 = "";
-                                do {
-                                    Console.WriteLine("\nWould you like to have more movies listed? Y/N");
-                                    listMore = Console.ReadLine().ToUpper();
-                                    oops5 = (listMore == "Y" || listMore == "N") ? "Y" : "N";
-                                } while (oops5 != "Y");  
-                            } while (listMore !="N");
-                           
-                        }
-                    }
-
-
-        //-----------------------------------------------------------------------------------------------------------
-
+        //------------------------------------------------------------------------------------------------
+        
         public void Update()
         {
             string titleAndYear2 = "";
             long iDSearch = 100;            
             bool bError;
             do
-            {
-                
+            {                
                 try {
                     bError = false;
                     System.Console.WriteLine("\nEnter ID# of movie to Update: ");
@@ -181,16 +151,8 @@ namespace MovieLibrary_DB1.DataModels
                 {
                     System.Console.WriteLine("\n** Error Message: " + e.Message + "**");
                     bError = true;
-                    System.Console.WriteLine("\nWould you like to try another update? Y/N");
-                    var anotherUpdate = Console.ReadLine();
-                    if (anotherUpdate.ToUpper() == "N")
-                    {
-                        bError = false;
-                    }
                 }
-            } while (bError); 
-
-                   
+            } while (bError);                   
         }
         //-----------------------------------------------------------------------------------------------------------
         public void Delete()
@@ -217,5 +179,32 @@ namespace MovieLibrary_DB1.DataModels
                 }
             }
         }
+         //-----------------------------------------------------------------------------------------------------------
+
+        public void Display()
+        {
+           
+            System.Console.WriteLine("\nMovies Database List:\n");
+            string listMore = "";
+            int skip = 0;
+            int take = 10;
+            using (var db = new Context.MovieContext())
+            {
+                do
+                { 
+                    db.Movies.Skip(skip).Take(take).ToList()
+                    .ForEach(b => Console.WriteLine("{0,8}  {1,-65}  {2,-45}", b.Id, b.Title, b.ReleaseDate));
+                    skip = skip+10;
+                    string oops5 = "";
+                    do {
+                        Console.WriteLine("\nWould you like to have more movies listed? Y/N");
+                        listMore = Console.ReadLine().ToUpper();
+                        oops5 = (listMore == "Y" || listMore == "N") ? "Y" : "N";
+                    } while (oops5 != "Y");  
+                } while (listMore !="N");
+                
+            }
+        }
+        //-----------------------------------------------------------------------------------------------------------
     }
 }

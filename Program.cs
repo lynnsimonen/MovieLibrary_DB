@@ -23,10 +23,11 @@ namespace MovieLibrary_DB1
                     +"\nB Search for a movie or view all items in library" 
                     +"\nC Update a movie in library"
                     +"\nD Delete a movie from the library" 
+                    +"\nE Add a new user"
                     +"\nQUIT program");
                     libraryOption = Console.ReadLine().ToUpper();
                     oops = (libraryOption == "A" || libraryOption == "QUIT" ||libraryOption == "B" 
-                    || libraryOption == "C" || libraryOption == "D") ? "Y" : "N";
+                    || libraryOption == "C" || libraryOption == "D" || libraryOption == "E") ? "Y" : "N";
                 } while (oops != "Y");  
 
                 //ADD MOVIE
@@ -64,6 +65,13 @@ namespace MovieLibrary_DB1
                 {
                     DataModels.MovieManager movieManager = new DataModels.MovieManager();
                     movieManager.Delete();
+                }
+
+                //ADD NEW USER
+                else if (libraryOption.ToUpper() == "E")
+                {
+                    DataModels.UserManager userManager = new DataModels.UserManager();
+                    userManager.Add();
                 }
 
             } while (libraryOption.ToUpper() != "QUIT");    
