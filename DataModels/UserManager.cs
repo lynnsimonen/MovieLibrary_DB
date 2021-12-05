@@ -25,7 +25,7 @@ namespace MovieLibrary_DB1.DataModels
                     var zipCode = "";
                     bError = false;
                     do {
-                        System.Console.WriteLine("\nUser gender (M/F): ");
+                        System.Console.WriteLine("\nADD A NEW USER TO THE MOVIE DATABASE:\nUser gender (M/F): ");
                         gender = (Console.ReadLine()).ToUpper();
                     }
                     while (!(gender == "M" || gender == "F")); 
@@ -43,17 +43,25 @@ namespace MovieLibrary_DB1.DataModels
                     }
                     while (!Regex.IsMatch(zipCode, @"\d{5}$"));
 
-                    
-                    OccListAndInclusive();
-                   
+                    DataModels.OccManager occManager = new DataModels.OccManager();
+                    occManager.IsInOccList();     
+
                     using (var db = new Context.MovieContext())
                     {
-                        var user = new User() {Age = age, Gender = gender, ZipCode = zipCode};
+                        DataModels.Occupation occupation = new DataModels.Occupation();
+                        occupation = db.Occupations.Where(s => s.Id == 20).First();
+
+                        var user = new User() {Age = age, Gender = gender, ZipCode = zipCode, Occupation = occupation};
+                        //var user = new User() {Age = 34, Gender = "M", ZipCode = "12343", Occupation = occupation};
                         db.Users.Add(user);    
                         db.SaveChanges();
-                        System.Console.WriteLine($"The new user ID# is: {user.Id}");
+                        System.Console.WriteLine($"\nNEW USER INFORMATION IS: "+
+                        $"\nID: {user.Id}"+
+                        $"\nAGE: {user.Age}"+
+                        $"\nGENDER: {user.Gender}"+
+                        $"\nZIPCODE: {user.ZipCode}"+
+                        $"\nOCCUPATION: {occupation.Name}");
                     }
-
                 }
                 catch (Exception ex)
                 {
@@ -64,35 +72,65 @@ namespace MovieLibrary_DB1.DataModels
             } while (bError);     
         } 
 
-         public void OccListAndInclusive()
-        {     
-            bool bError = false;
-            do {
-                try {
-                    long occupationId = 0;
-                    List <Occupation> userOccupations = new List<Occupation> ();
+        public void Rate()
+        {
+            bool bError;            
+            do
+            {        
+                bError = false;        
+                try 
+                {       
+                    User user = new User();
+                    Movie movie = new Movie();
+                    UserMovie userMovie = new UserMovie();
+                    var userCurrent = user;
+                    var movieCurrent = movie;
+                    var dateRated = DateTime.Now;
+                    long ratingForMovie = 1;
+                    long movieToRateId = 0;  
+                    long userId = 0;         
                     using (var db = new Context.MovieContext())
                     {
-                        userOccupations = db.Occupations.ToList();
-                        foreach (var name in userOccupations)
-                        {
-                            System.Console.WriteLine($"\t{name.Id}  {name.Name}");
-                        }          
+                        var userIdList = db.Users.ToList();
                         do {
-                            System.Console.WriteLine("Enter ID# of user occupation (see above): ");
-                            occupationId = long.Parse(Console.ReadLine());
+                            System.Console.WriteLine("\nRATE A MOVIE!\nEnter your User ID#: ");
+                            userId = long.Parse(Console.ReadLine());
                         }
-                    while (!(userOccupations.Contains(db.Occupations.FirstOrDefault(s => s.Id == occupationId))));
-                    }
-                }   
-                catch (Exception e) 
-                { 
-                    System.Console.WriteLine("\n** Error Message: " + e.Message + "**");
+                        while (!(userIdList.Contains(db.Users.FirstOrDefault(s => s.Id == userId))));
+                  
+                        MovieManager movieManager = new MovieManager();
+                        movieManager.SearchKeyword();
+                        var movieIdList = db.Movies.ToList();
+                        do{                        
+                            System.Console.WriteLine("\nEnter the ID# of movie you would like to rate: ");
+                            movieToRateId = long.Parse(Console.ReadLine());  
+                        }    
+                        while (!(movieIdList.Contains(db.Movies.FirstOrDefault(s => s.Id == movieToRateId)))); 
+
+                        do {           
+                            System.Console.WriteLine("Enter a rating of 1 (Bad) to 5 (Great!): ");             
+                            ratingForMovie = long.Parse(Console.ReadLine());
+                        } while (ratingForMovie <1 && ratingForMovie>5);
+
+                        user = db.Users.Where(s => s.Id == userId).First();
+                        movie = db.Movies.Where(s => s.Id == movieToRateId).First();
+                        var userRating = new UserMovie(){Rating = ratingForMovie, User = user, Movie = movie, RatedAt = dateRated};
+                        db.UserMovies.Add(userRating);    
+                        db.SaveChanges();
+                        System.Console.WriteLine($"\nUSER MOVIE RATING: "+
+                        $"\nUser ID: {user.Id}"+
+                        $"\nMovie: {movie.Title}"+
+                        $"\nRating Given: {userRating.Rating}");                      
+                    }                    
+                }
+                catch (Exception ex)
+                {
+                    //System.Console.WriteLine("\n** Error Message: " + e.Message + "**");
+                    System.Console.WriteLine((string.Format("An Error has occured.\nError Message: {0}\nInner Exception: {1}",
+                    ex.Message.ToString(), ex.InnerException.ToString())));
                     bError = true;
                 }
-            } while (bError);                 
-           
-        }
-        
+            } while (bError);     
+        } 
     }
 }

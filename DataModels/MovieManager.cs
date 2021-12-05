@@ -25,7 +25,7 @@ namespace MovieLibrary_DB1.DataModels
                     int dateMax;
                     do {
                         bError = false;
-                        System.Console.WriteLine("Title of Movie to Add: ");
+                        System.Console.WriteLine("\nADD A MOVIE TO THE LIBRARY\nTitle of Movie to Add: ");
                         title = Console.ReadLine();
                         System.Console.WriteLine("Release Year of Movie (YYYY): ");
                         releaseYear = DateTime.Parse("01/01/" + (Console.ReadLine())); //.ToString("yyyy");
@@ -59,7 +59,7 @@ namespace MovieLibrary_DB1.DataModels
         // SPECIFIC TITLE SEARCH ONLY
         public void Search()
         {
-            System.Console.WriteLine("Search for Movie Name: ");
+            System.Console.WriteLine("\nSEARCH FOR A SPECIFIC MOVIE\nMovie Title to Search: ");
             var title = Console.ReadLine()?.ToUpper();
             System.Console.WriteLine("Release Year of Movie: ");
             var releaseYear = Console.ReadLine();
@@ -95,6 +95,7 @@ namespace MovieLibrary_DB1.DataModels
                     string listMore = "N";
                     int skip = 0;
                     int take = 10;
+                    System.Console.WriteLine("{0,8}  {1,-65}  {2,-45}", "ID", "Title", "Release Date");
                     do {
                         var listNow = moviesContains.Skip(skip).Take(take).ToList();
                         listNow.ForEach(b => Console.WriteLine("{0,8}  {1,-65}  {2,-45}", b.Id, b.Title, b.ReleaseDate));
@@ -129,7 +130,7 @@ namespace MovieLibrary_DB1.DataModels
             {                
                 try {
                     bError = false;
-                    System.Console.WriteLine("\nEnter ID# of movie to Update: ");
+                    System.Console.WriteLine("\nUPDATE MOVIE DETAILS\nEnter ID# of movie to Update: ");
                     iDSearch = long.Parse(Console.ReadLine());
                     System.Console.WriteLine("Enter Updated Movie Title: ");
                     var title2 = Console.ReadLine();
@@ -157,7 +158,7 @@ namespace MovieLibrary_DB1.DataModels
         //-----------------------------------------------------------------------------------------------------------
         public void Delete()
         {
-            System.Console.WriteLine("\nEnter ID# of movie to delete: ");
+            System.Console.WriteLine("\nDELETE A MOVIE FROM THE DATABASE\nEnter ID# of movie to delete: ");
             long IdOrPrint = int.Parse(Console.ReadLine());
             using (var db = new Context.MovieContext())            
             {       
@@ -184,7 +185,7 @@ namespace MovieLibrary_DB1.DataModels
         public void Display()
         {
            
-            System.Console.WriteLine("\nMovies Database List:\n");
+            System.Console.WriteLine("\nLIST OF MOVIES IN THE DATABASE\nMovies Database List:\n");
             string listMore = "";
             int skip = 0;
             int take = 10;
