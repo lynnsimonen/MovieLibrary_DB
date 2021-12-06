@@ -31,7 +31,7 @@ namespace MovieLibrary_DB1
                     libraryOption = Console.ReadLine().ToUpper();
                     oops = (libraryOption == "A" || libraryOption == "QUIT" ||libraryOption == "B" 
                     || libraryOption == "C" || libraryOption == "D" || libraryOption == "E"
-                    || libraryOption == "F") ? "Y" : "N";
+                    || libraryOption == "F" || libraryOption == "G") ? "Y" : "N";
                 } while (oops != "Y");  
 
                 //ADD MOVIE
@@ -88,12 +88,12 @@ namespace MovieLibrary_DB1
                     userManager.Rate();
                 }
 
-                // //LIST TOP RATED MOVIE BY AGE OR OCCUPATION BRACKET
-                // else if (libraryOption.ToUpper() == "G")
-                // {
-                //     DataModels.UserManager userManager = new DataModels.UserManager();
-                //     userManager.Bracket();
-                // }
+                //LIST TOP RATED MOVIE BY AGE OR OCCUPATION BRACKET
+                else if (libraryOption.ToUpper() == "G")
+                {
+                    DataModels.UserManager userManager = new DataModels.UserManager();
+                    userManager.Bracket();
+                }
 
                 // //LIST OF MOVIES BY GENRE TYPE
                 // else if (libraryOption.ToUpper() == "H")
