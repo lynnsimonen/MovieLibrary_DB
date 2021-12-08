@@ -6,6 +6,10 @@ using System.Text;
 using System.Data;
 using NLog;
 using NLog.Web;
+using System.Text.RegularExpressions;
+using System.Windows;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MovieLibrary_DB1.DataModels
 {
@@ -207,5 +211,90 @@ namespace MovieLibrary_DB1.DataModels
             }
         }
         //-----------------------------------------------------------------------------------------------------------
+
+        public void Top10Genre()
+        {
+            bool bError;            
+            do
+            {     
+                bError = false;               
+                long genreType = 0;
+                System.Console.WriteLine("\nFIND THE TOP MOVIES OF ANY GENRE\n");
+                List <Genre> genreList = new List<Genre> (); 
+                using (var db = new Context.MovieContext()) {                    
+                    genreList = db.Genres.ToList();
+                    System.Console.WriteLine($"\tID#  Genre");
+                    do {                        
+                        foreach (var n in genreList)
+                        {
+                            System.Console.WriteLine($"\t{n.Id}    {n.Name}");
+                        } 
+                        try {
+                            System.Console.WriteLine("\nEnter Genre ID# of Your Choice (see above): ");
+                            genreType = long.Parse(Console.ReadLine());
+                        } 
+                        catch (Exception ex)
+                        {
+                            System.Console.WriteLine($"\n*** An Error has occured. ***\nError Message: {ex.Message.ToString()}");
+                            if (ex.InnerException != null)
+                                {System.Console.WriteLine($"Inner Exception: {ex.InnerException.ToString()}");}
+                            // System.Console.WriteLine("\n** Error Message: " + ex.Message + "**");
+                            bError = true;
+                        }  
+                        bError = false;                        
+                    } while (!(genreList.Contains(db.Genres.Where(s => s.Id == genreType).FirstOrDefault()))); 
+                }                         
+                try 
+                {   
+                    using (var db = new Context.MovieContext())
+                    {
+
+                        //List of movies of certain genre type
+                        var top10MoviesToList = db.MovieGenres
+                            .Where(s => s.Genre.Id == genreType)
+                            .OrderBy(s =>s.Movie.Title)
+                            .Select(s =>s.Movie.Id)
+                            .ToList(); 
+
+                            
+                        var genreTypeName = db.Genres.Where(s => s.Id == genreType).Select(s => s.Name).FirstOrDefault(); 
+
+                        System.Console.WriteLine($"\nTOP 10 {genreTypeName.ToUpper()} MOVIES:  ");
+
+                        System.Console.WriteLine($"\n{"Movie ID",-9}\t{"Movie Title",-80}\t{"Average Rating",-16}");
+                        var limitList = 0;
+
+                        foreach (var id in top10MoviesToList)
+                        {        
+                             //Average rating of a movie
+                                var aveMovieRating = db.UserMovies
+                                .Where(c => c.Movie.Id == id)
+                                .Select(s => s.Rating)
+                                .Average();
+
+                            if (aveMovieRating>=4 && limitList<=10) 
+                            //if (aveMovieRating>=4) 
+                            {
+                                var movieName = db.Movies.Where(s => s.Id == id).Select(s => s.Title).FirstOrDefault();
+                                System.Console.WriteLine($"{id,9}\t{movieName,-80}\t{aveMovieRating,-16:0.00}   ");
+                                limitList++;
+                            }  
+                            // else 
+                            // {
+                            //     break;
+                            // }
+                        }
+                    }                       
+                }
+                catch (Exception ex)
+                {
+                    System.Console.WriteLine($"\n*** An Error has occured. ***\nError Message: {ex.Message.ToString()}");
+                    if (ex.InnerException != null)
+                        {System.Console.WriteLine($"Inner Exception: {ex.InnerException.ToString()}");}
+                    // System.Console.WriteLine("\n** Error Message: " + ex.Message + "**");
+                    bError = true;
+                }     
+            } while (bError);
+        }
     }
 }

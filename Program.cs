@@ -26,12 +26,12 @@ namespace MovieLibrary_DB1
                     +"\nE Add a new user"
                     +"\nF Rate a movie"
                     +"\nG List the top rated movie by age or occupation bracket"
-                    +"\nH List all movies of genre type"
+                    +"\nH List top 10 movies in a genre type"
                     +"\nQUIT program");
                     libraryOption = Console.ReadLine().ToUpper();
                     oops = (libraryOption == "A" || libraryOption == "QUIT" ||libraryOption == "B" 
                     || libraryOption == "C" || libraryOption == "D" || libraryOption == "E"
-                    || libraryOption == "F" || libraryOption == "G") ? "Y" : "N";
+                    || libraryOption == "F" || libraryOption == "G" || libraryOption == "H") ? "Y" : "N";
                 } while (oops != "Y");  
 
                 //ADD MOVIE
@@ -95,12 +95,12 @@ namespace MovieLibrary_DB1
                     userManager.Bracket();
                 }
 
-                // //LIST OF MOVIES BY GENRE TYPE
-                // else if (libraryOption.ToUpper() == "H")
-                // {
-                //     DataModels.UserManager userManager = new DataModels.UserManager();
-                //     userManager.MovieGenreList();
-                // }
+                //LIST OF MOVIES BY GENRE TYPE
+                else if (libraryOption.ToUpper() == "H")
+                {
+                    DataModels.MovieManager movieManager = new DataModels.MovieManager();
+                    movieManager.Top10Genre();
+                }
 
             } while (libraryOption.ToUpper() != "QUIT");    
         }

@@ -164,23 +164,24 @@ namespace MovieLibrary_DB1.DataModels
                     {   
                         using (var db = new Context.MovieContext())
                         {
-                            var topRating = db.UserMovies.Select(s => s.Rating).Max();
+                            var topRating = db.UserMovies.Where(s => s.User.Age == ageBracket).Select(s => s.Rating).Max();
                             var topMovieB = db.UserMovies
-                                .Where(s => s.Rating == topRating)
                                 .Where(s => s.User.Age == ageBracket)
+                                .Where(s => s.Rating == topRating)                                
                                 .OrderBy(s =>s.Movie.Title)
                                 .Reverse()
                                 .Include(s => s.User)
                                 .Include(m => m.Movie)
                                 .Last();
                         
-                            System.Console.WriteLine($"\nTOP RATED MOVIE\nAge Bracket: {ageBracket}\nTop Rating: {topMovieB.Rating}\nFirst Movie (alphabetically): {topMovieB.Movie.Title}");
+                            System.Console.WriteLine($"\nTOP RATED MOVIE\n" +
+                                $"Age Bracket: {ageBracket}\n" +
+                                $"Top Rating: {topMovieB.Rating}\n" +
+                                $"First Movie (alphabetically): {topMovieB.Movie.Title}");
                         }  
                     }
                     catch (Exception ex)
                     {
-                        // System.Console.WriteLine((string.Format("An Error has occured.\nError Message: {0}\nInner Exception: {1}",
-                        // ex.Message.ToString(), ex.InnerException.ToString())));
                         System.Console.WriteLine("\n** Error Message: " + ex.Message + "**");
                         bError = true;
                     }   
@@ -192,7 +193,7 @@ namespace MovieLibrary_DB1.DataModels
                         do {
                             OccManager occManager = new OccManager();
                             occManager.ListOccupations();
-                            System.Console.WriteLine("Enter ID# of user occupation (see above): ");
+                            System.Console.WriteLine("\nEnter ID# of user occupation (see above): ");
                             occupationIdBracket = long.Parse(Console.ReadLine());                            
                         } while (!(userOccupations.Contains(db.Occupations.FirstOrDefault(s => s.Id == occupationIdBracket))));           
                     }                    
@@ -200,36 +201,45 @@ namespace MovieLibrary_DB1.DataModels
                     {   
                         using (var db = new Context.MovieContext())
                         {
-                            var topRating = db.UserMovies.Select(s => s.Rating).Max();
+                            var occName = db.Occupations.Where(s => s.Id == occupationIdBracket).Select(n => n.Name).First();
+                            var topRating = db.UserMovies.Where(s => s.User.Occupation.Id == occupationIdBracket).Select(s => s.Rating).Max();
                             var topMovieB = db.UserMovies
-                                .Where(s => s.Rating == topRating)
                                 .Where(s => s.User.Occupation.Id == occupationIdBracket)
+                                .Where(s => s.Rating == topRating)
                                 .OrderBy(s =>s.Movie.Title)
                                 .Reverse()
                                 .Include(s => s.User)
                                 .Include(m => m.Movie)
-                                .ToList();
+                                .Last();
 
-                            //var occ = db.Occupations.Where(s => s.Id == occupationIdBracket).First();
+                            System.Console.WriteLine($"\nTOP RATED MOVIE\n" +
+                                $"Occupation Bracket: {occName}\n" +
+                                $"Top Rating: {topMovieB.Rating}\n" +
+                                $"First Movie (alphabetically): {topMovieB.Movie.Title}");
 
-                            //System.Console.WriteLine($"\nTOP RATED MOVIE\nOccupation Bracket: {occ.Name}\nTop Rating: {topMovieB.Rating}\nFirst Movie (alphabetically): {topMovieB.Movie.Title}");
+                            // var topMovieList = db.UserMovies
+                            //     .Where(s => s.User.Occupation.Id == occupationIdBracket)
+                            //     .Where(s => s.Rating == topRating)
+                            //     .OrderBy(s =>s.Movie.Title)
+                            //     .Reverse()
+                            //     .Include(s => s.User)
+                            //     .Include(m => m.Movie)
+                            //     .ToList();
 
-                            var occ = db.Occupations.Where(s => s.Id == occupationIdBracket).Last();
-
-                            foreach (var n in topMovieB)
-                            {System.Console.WriteLine($" {n.User.Occupation.Name}  {n.Rating}  {n.Movie.Title}");}
+                            // foreach (var n in topMovieList)
+                            // {
+                            //     System.Console.WriteLine($"User ID: {n.User.Id} Rating: {n.Rating} Movie: {n.Movie.Title}");
+                            // }
                         }  
                     }
                     catch (Exception ex)
                     {
-                        // System.Console.WriteLine((string.Format("An Error has occured.\nError Message: {0}\nInner Exception: {1}",
-                        // ex.Message.ToString(), ex.InnerException.ToString())));
                         System.Console.WriteLine("\n** Error Message: " + ex.Message + "**");
                         bError = true;
                     }   
-                }               
-               
+                } 
             } while (bError);
         }
+        
     }
 }

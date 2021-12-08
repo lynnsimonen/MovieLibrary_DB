@@ -13,7 +13,7 @@ namespace MovieLibrary_DB1.DataModels
             bool bError = false;
             do {
                 try {
-                    List <Occupation> userOccupations = new List<Occupation> ();
+                    List <Occupation> userOccupations = new List<Occupation>();
                     using (var db = new Context.MovieContext())
                     {
                         userOccupations = db.Occupations.ToList();
@@ -43,9 +43,10 @@ namespace MovieLibrary_DB1.DataModels
             using (var db = new Context.MovieContext())
             {
                 userOccupations = db.Occupations.ToList();
-                foreach (var name in userOccupations)
+                System.Console.WriteLine($"\tID#  Occupation Type");
+                foreach (var n in userOccupations)
                 {
-                    System.Console.WriteLine($"\t{name.Id}  {name.Name}");
+                    System.Console.WriteLine($"\t{n.Id}  {n.Name}");
                 } 
             }
         }   
