@@ -259,7 +259,7 @@ namespace MovieLibrary_DB1.DataModels
                             
                         var genreTypeName = db.Genres.Where(s => s.Id == genreType).Select(s => s.Name).FirstOrDefault(); 
 
-                        System.Console.WriteLine($"\nTOP 10 {genreTypeName.ToUpper()} MOVIES:  ");
+                        System.Console.WriteLine($"\nTOP {genreTypeName.ToUpper()} MOVIES:  ");
 
                         System.Console.WriteLine($"\n{"Movie ID",-9}\t{"Movie Title",-80}\t{"Average Rating",-16}");
                         var limitList = 0;
